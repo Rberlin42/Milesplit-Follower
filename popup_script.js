@@ -12,11 +12,11 @@ function clear(){
             chrome.storage.local.get(id, function response(data){
                 data[id]["pr?"] = false;
                 chrome.storage.local.set(data);
+                var lineitem = checkboxes[i].parentElement;
+                var list = document.getElementById("runnersList");
+                list.removeChild(lineitem);
+                i--;
             });
-            var lineitem = checkboxes[i].parentElement;
-            var list = document.getElementById("runnersList");
-            list.removeChild(lineitem);
-            i--;
         }
     }
     chrome.tabs.reload();

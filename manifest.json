@@ -14,7 +14,7 @@
 	"permissions": ["tabs", "https://www.milesplit.com/", "activeTab", "storage"],
 	"content_scripts": [{
 		"matches": ["*://*.milesplit.com/athletes/*"],
-		"exclude_matches": ["*://*.milesplit.com/athletes", "*://*.milesplit.com/athletes/", "*://*.milesplit.com/athletes/*/photos", "*://*.milesplit.com/athletes/*/progression", "*://*.milesplit.com/athletes/*/videos", "*://*.milesplit.com/athletes/*/articles"],
+		"exclude_matches": ["*://*.milesplit.com/athletes", "*://*.milesplit.com/athletes/"],
 		"js": ["content.js"],
 		"css": ["content_style.css"]
 	}
