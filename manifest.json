@@ -18,6 +18,7 @@
 	"content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'",
 	"content_scripts": [{
 		"matches": ["*://*.milesplit.com/athletes/*"],
+
 		"exclude_matches": ["*://*.milesplit.com/athletes", "*://*.milesplit.com/athletes/", "*://*.milesplit.com/athletes/*/photos", "*://*.milesplit.com/athletes/*/progression", "*://*.milesplit.com/athletes/*/videos", "*://*.milesplit.com/athletes/*/articles"],
 		"js": ["Scripts/content.js"],
 		"css": ["Styles/content_style.css"]
