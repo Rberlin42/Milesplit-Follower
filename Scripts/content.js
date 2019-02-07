@@ -1,4 +1,4 @@
-window.addEventListener ("load", myMain, false);
+/*window.addEventListener ("load", myMain, false);
 
 function follow(){
 	if(!signedIn()){
@@ -9,7 +9,7 @@ function follow(){
 
 	var doc = document.createElement("html");
 	var request = new XMLHttpRequest();
-    request.open("GET", "http://milesplit.com/athletes/"+id);
+    request.open("GET", "https://www.milesplit.com/athletes/"+id);
 	request.onreadystatechange = function() {
         if (this.readyState == this.DONE && this.status == 200) {
             if (this.responseText) {
@@ -94,4 +94,4 @@ function getRunnerData(doc, id){
 	prs["pr?"] = false;
 	runner[id] = prs;
 	return runner;
-}
+}*/

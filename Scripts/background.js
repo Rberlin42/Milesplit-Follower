@@ -1,22 +1,7 @@
-function checkForValidUrl(tabId, changeInfo, tab) {
-	if (tab.url.indexOf('milesplit.com') > -1) {
-		var id;
-		chrome.storage.local.get(null, function response(data){
-			var ids = Object.keys(data);
-			for(var i=0; i<ids.length; ++i){
-				if(ids[i] != 'notifications'){
-					prRequest(ids[i], data[ids[i]]);
-				}
-			}
-			chrome.pageAction.show(tabId);
-		});
-	}
-};
-
-function prRequest(id, runner){
+/*function prRequest(id, runner){
 	var doc = document.createElement("html");
 	var request = new XMLHttpRequest();
-    request.open("GET", "http://milesplit.com/athletes/"+id);
+    request.open("GET", "https://www.milesplit.com/athletes/"+id);
 	request.onreadystatechange = function() {
         if (this.readyState == this.DONE && this.status == 200) {
             if (this.responseText) {
@@ -86,6 +71,4 @@ function getRunnerData(doc, id){
 	runner[id] = prs;
 	return runner;
 }
-
-// Listen for any changes to the URL of any tab.
-chrome.tabs.onUpdated.addListener(checkForValidUrl);
+*/
