@@ -23,7 +23,6 @@ function clear(){
                 runner[id]["pr"] = false;
                 chrome.storage.sync.set(runner);
             });
-            
 
             // remove it from the list
             $(this).remove();
@@ -57,7 +56,7 @@ function displayRunners(runners){
             return;
 
         // create the list item
-        var listItem = $("<li value=" + id + "><input type=\'checkbox\'><a href=\'\'> " + runner["name"] + "</a></li>");
+        var listItem = $("<li value=" + id + "><input type=\'checkbox\'><a href=\'\'> " + runner["first_name"] + " " + runner["last_name"] + "</a></li>");
         // add the click listener
         listItem.find("a").click(link);
         // add the pr indicator if necessary
@@ -74,35 +73,29 @@ function link(e){
     chrome.tabs.update({url:newURL});
 }
 
+
+//Tests
 var me = 
 {
-    "name": "Ryan Berlin",
+    "first_name": "Ryan",
+    "last_name": "Berlin",
     "new_result": true,
     "pr": true
 }
-
 var a = 
 {
-    "name": "Nigga jones",
+    "first_name": "hello",
+    "last_name": "there",
     "new_result": false,
     "pr": false
 }
-
 var b = 
 {
-    "name": "Big Chungus",
+    "first_name": "Big",
+    "last_name": "Chungus",
     "new_result": true,
     "pr": false
 }
-
 //chrome.storage.sync.clear();
 //chrome.storage.sync.set({1:me, 2:a, 3:b});
 printStorageData();
-
-
-
-
-
-
-
-
