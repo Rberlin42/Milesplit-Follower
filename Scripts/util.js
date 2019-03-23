@@ -17,3 +17,24 @@ function printStorageData(){
 		console.log(data);
 	});
 }
+
+// redirect to the runner associated with the list item
+function link(e){
+	var newURL = e.target.href;
+	chrome.tabs.update({url:newURL});
+}
+
+/*
+Runner Storage Structure:
+
+{
+	"first_name": "Ryan",
+	"last_name": "Berlin",
+	"new_results": 	{
+						result_id: {"event": "5k", "mark": "15:26", "pr": true},
+						result_id: {"event": "8k (xc)", "mark": "27:04", "pr": false}
+					},
+	"last_seen_result": result_id
+}
+	
+*/

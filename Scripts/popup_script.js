@@ -11,16 +11,15 @@ $(document).ready(function(){
 function clear(){
 
     // loop through each line
-    $("li").each(function(){
+    $("tr").each(function(){
 
         // if its checked, remove it and update the storage
         if($(this).find("input").prop("checked")){
-            var id = $(this).val();
+            var ids = $(this).val().split(".");
             
-            // find the runner in storage and update the notification flags to false
-            chrome.storage.sync.get(id+"", (runner) => {
-                runner[id]["new_result"] = false;
-                runner[id]["pr"] = false;
+            // find the runner in storage and remove the result
+            chrome.storage.sync.get(id[0], (runner) => {
+                delete runner["new_results"][ids[1]];
                 chrome.storage.sync.set(runner);
             });
 
@@ -46,31 +45,32 @@ function displayRunners(runners){
         return;
     }
 
-    // look for runners who have new results
-    var ids = Object.keys(runners);
-    ids.forEach((id) => {
+    // loop through the runners and add line items for each new result
+    for(id in runners){
         var runner = runners[id];
+        var results = runner["new_results"];
 
-        //check if the runner has a new result or not
-        if(!runner["new_result"])
-            return;
+        // loop through each new result for this runner
+        for(resultID in results){
+            result = results[resultID];
 
-        // create the list item
-        var listItem = $("<li value=" + id + "><input type=\'checkbox\'><a href=\'\'> " + runner["first_name"] + " " + runner["last_name"] + "</a></li>");
-        // add the click listener
-        listItem.find("a").click(link);
-        // add the pr indicator if necessary
-        if(runner["pr"])
-            listItem.append(" - PR!");
-        // append to the list
-        $("#results").append(listItem);
-    });
-}
+            // create the row item
+            var lineItem = $("<tr value=" + id + "." + resultID + "></tr>");
+            lineItem.append($("<td><input type=\'checkbox\'></td>"));
+            lineItem.append($("<td><a href=http://milesplit.com/athletes/" + id + "> " + runner["first_name"] + " " + runner["last_name"] + "</a></td>"));
+            lineItem.append($("<td>" + result["event"] + "</td>"));
+            lineItem.append($("<td>" + result["mark"] + "</td>"));
+            if(result["pr"])
+                lineItem.append($("<td>PR!</td>"));
+            else
+                lineItem.append($("<td></td>"));
 
-// redirect to the runner associated with the list item
-function link(e){
-    var newURL = "http://milesplit.com/athletes/" + e.target.parentElement.value + "/stats";
-    chrome.tabs.update({url:newURL});
+            // add the click listener
+            lineItem.find("a").click(link);
+            // append to the list
+            $("#results").append(lineItem);
+        }
+    }
 }
 
 
@@ -79,23 +79,40 @@ var me =
 {
     "first_name": "Ryan",
     "last_name": "Berlin",
-    "new_result": true,
-    "pr": true
+    "new_results": {
+        12345: {
+            "event": "5k",
+            "mark": "15:26",
+            "pr": true
+        },
+        12332: {
+            "event": "8k (xc)",
+            "mark": "27:04",
+            "pr": false
+        }
+    },
+    "last_seen_result": 12345
 }
 var a = 
 {
     "first_name": "hello",
     "last_name": "there",
-    "new_result": false,
-    "pr": false
+    "new_results": {
+        1111: {
+            "event": "shot put",
+            "mark": "25m",
+            "pr": false
+        },
+    },
+    "last_seen_result": 12345
 }
 var b = 
 {
     "first_name": "Big",
     "last_name": "Chungus",
-    "new_result": true,
-    "pr": false
+    "new_results": {},
+    "last_seen_result": 0
 }
-//chrome.storage.sync.clear();
-//chrome.storage.sync.set({1:me, 2:a, 3:b});
+chrome.storage.sync.clear();
+chrome.storage.sync.set({1:me, 2:a, 3:b});
 printStorageData();

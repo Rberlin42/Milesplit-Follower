@@ -13,7 +13,7 @@ function unfollow(){
 		return;
 
 	//loop through each line
-	$("li").each(function(){
+	$("tr").each(function(){
 
 		// if it is checked, remove it from the list and the storage
 		if($(this).find("input").prop("checked")){
@@ -35,7 +35,6 @@ function selectAll(){
 
 // Take in the runner objects and display them in the list
 function displayRunners(data){
-	console.log(data);
 	// if the storage request returns an error, then display it
     if(chrome.runtime.lastError){
         $("body").html(chrome.runtime.lastError);
@@ -69,16 +68,16 @@ function displayRunners(data){
 
 	// add to page
 	runners.forEach((runner) => { 
-		// create the list item
-    	var listItem = $("<li value=" + runner[2] + "><input type=\'checkbox\'><a href=\'\'> " + runner[1] + " " + runner[0] + "</a></li>");
+		// create the row item
+    	var lineItem = $("<tr value=" + runner[2] + "></tr>");
+    	lineItem.append($("<td><input type=\'checkbox\'></td>"));
+    	lineItem.append($("<td><a href=http://milesplit.com/athletes/" + runner[2] + "> " + runner[1] + " " + runner[0] + "</a></td>"));
+
 		// add the click listener
-        listItem.find("a").click(link);
-        $("#runnersList").append(listItem);
+        lineItem.find("a").click(link);
+        // append to the list
+   		$("#runnersList").append(lineItem);
 	});
 }
 
-// redirect to the runner associated with the list item
-function link(e){
-	var newURL = "http://milesplit.com/athletes/" + e.target.parentElement.value + "/stats";
-	chrome.tabs.update({url:newURL});
-}
+
