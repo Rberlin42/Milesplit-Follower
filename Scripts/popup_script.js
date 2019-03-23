@@ -11,15 +11,15 @@ $(document).ready(function(){
 function clear(){
 
     // loop through each line
-    $("tr").each(function(){
+    $(".lineItem").each(function(){
 
         // if its checked, remove it and update the storage
         if($(this).find("input").prop("checked")){
-            var ids = $(this).val().split(".");
+            var ids = $(this).attr("value").split(".");
             
             // find the runner in storage and remove the result
-            chrome.storage.sync.get(id[0], (runner) => {
-                delete runner["new_results"][ids[1]];
+            chrome.storage.sync.get(ids[0], (runner) => {
+                delete runner[ids[0]]["new_results"][ids[1]];
                 chrome.storage.sync.set(runner);
             });
 
@@ -55,7 +55,7 @@ function displayRunners(runners){
             result = results[resultID];
 
             // create the row item
-            var lineItem = $("<tr value=" + id + "." + resultID + "></tr>");
+            var lineItem = $("<tr class='lineItem' value=" + id + "." + resultID + "></tr>");
             lineItem.append($("<td><input type=\'checkbox\'></td>"));
             lineItem.append($("<td><a href=http://milesplit.com/athletes/" + id + "> " + runner["first_name"] + " " + runner["last_name"] + "</a></td>"));
             lineItem.append($("<td>" + result["event"] + "</td>"));
@@ -113,6 +113,6 @@ var b =
     "new_results": {},
     "last_seen_result": 0
 }
-chrome.storage.sync.clear();
-chrome.storage.sync.set({1:me, 2:a, 3:b});
+//chrome.storage.sync.clear();
+//chrome.storage.sync.set({1:me, 2:a, 3:b});
 printStorageData();

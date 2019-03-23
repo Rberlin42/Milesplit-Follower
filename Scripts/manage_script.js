@@ -13,16 +13,15 @@ function unfollow(){
 		return;
 
 	//loop through each line
-	$("tr").each(function(){
+	$(".lineItem").each(function(){
 
 		// if it is checked, remove it from the list and the storage
 		if($(this).find("input").prop("checked")){
-			var id = $(this).val();
+			var id = $(this).attr("value");
 			chrome.storage.sync.remove(id);
 			$(this).remove();
 		}
 	});
-	printStorageData();
 	chrome.tabs.reload();
 }
 
@@ -69,7 +68,7 @@ function displayRunners(data){
 	// add to page
 	runners.forEach((runner) => { 
 		// create the row item
-    	var lineItem = $("<tr value=" + runner[2] + "></tr>");
+    	var lineItem = $("<tr class='lineItem' value=" + runner[2] + "></tr>");
     	lineItem.append($("<td><input type=\'checkbox\'></td>"));
     	lineItem.append($("<td><a href=http://milesplit.com/athletes/" + runner[2] + "> " + runner[1] + " " + runner[0] + "</a></td>"));
 
