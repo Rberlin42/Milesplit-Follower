@@ -19,8 +19,8 @@
 	"content_scripts": [{
 		"matches": ["*://*.milesplit.com/athletes/*"],
 
-		"exclude_matches": ["*://*.milesplit.com/athletes", "*://*.milesplit.com/athletes/", "*://*.milesplit.com/athletes/*/photos", "*://*.milesplit.com/athletes/*/progression", "*://*.milesplit.com/athletes/*/videos", "*://*.milesplit.com/athletes/*/articles"],
-		"js": ["Scripts/content.js"],
+		"exclude_matches": ["*://*.milesplit.com/athletes", "*://*.milesplit.com/athletes/"],
+		"js": ["Scripts/jquery-3.1.1.min.js", "Scripts/util.js", "Scripts/content.js"],
 		"css": ["Styles/content_style.css"]
 	}
 	]

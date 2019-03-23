@@ -5,8 +5,19 @@ Provides an inteface for getting runner data with HTTP requests, and accessing t
 
 // Takes a runner ID and returns a runner object
 // returns null if it is not found or if the request returns bad data
-function scrapeRunnerData(id){
+function scrapeRunnerData(id, callback){
+	// get request for the runner's stats
+	$.get("https://www.milesplit.com/athletes/"+id, {"sort":"byDate"}, (data, status, xhr) => {
+		if(status == "success"){
+			var page = $("<html></html>").append(data.substring(data.indexOf("<!doctype html>")+16, data.indexOf("</html>")-1));
+			var runner = {}
 
+		}
+		else{
+			// failure
+			callback(null);
+		}
+	});
 }
 
 
