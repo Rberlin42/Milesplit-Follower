@@ -1,6 +1,8 @@
 // load all followed runners from storage
 chrome.storage.sync.get(null, displayRunners);
 
+var followCount;
+
 // add event handlers for the buttons
 $(document).ready(function(){
     $("#unfollow").click(unfollow);
@@ -20,8 +22,14 @@ function unfollow(){
 			var id = $(this).attr("value");
 			chrome.storage.sync.remove(id);
 			$(this).remove();
+
+			//update the count
+			followCount--;
 		}
 	});
+
+	//update the count on the page
+	$("#follow-count").text(followCount);
 	chrome.tabs.reload();
 }
 
@@ -40,7 +48,10 @@ function displayRunners(data){
         return;
     }
 
+    // display the number of athletes followed
 	var ids = Object.keys(data);
+	followCount = ids.length;
+	$("#follow-count").text(followCount);
 
 	// create a list of [last_name, first_name, id, team, teamID, location] lists
 	runners = [];
