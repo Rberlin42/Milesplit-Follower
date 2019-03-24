@@ -46,7 +46,7 @@ function getID(){
 // follow the athlete
 function followAthlete(){
 	// get some info from the page
-	var nameInfo = $("meta[name=keywords]").attr("content").split(",");
+	var nameInfo = $("#athleteName").text().split(" ");
 	var team = $("span.current-school a").text();
 	var tid = $("span.current-school a").attr("href").split("/");
 	var loc = $("span.city-state").text();
