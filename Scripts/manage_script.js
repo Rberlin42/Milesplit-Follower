@@ -42,12 +42,15 @@ function displayRunners(data){
 
 	var ids = Object.keys(data);
 
-	// create a list of [last_name, first_name, id] pairs
+	// create a list of [last_name, first_name, id, team, teamID, location] lists
 	runners = [];
 	ids.forEach((id) => {
 		var fname = data[id]["first_name"];
 		var lname = data[id]["last_name"];
-		runners.push([lname, fname, id]);
+		var team = data[id]["team"];
+		var tid = data[id]["teamID"];
+		var loc = data[id]["location"];
+		runners.push([lname, fname, id, team, tid, loc]);
 	});
 
 
@@ -70,7 +73,9 @@ function displayRunners(data){
 		// create the row item
     	var lineItem = $("<tr class='lineItem' value=" + runner[2] + "></tr>");
     	lineItem.append($("<td><input type=\'checkbox\'></td>"));
-    	lineItem.append($("<td><a href=http://milesplit.com/athletes/" + runner[2] + "> " + runner[1] + " " + runner[0] + "</a></td>"));
+    	lineItem.append($("<td><a href=http://milesplit.com/athletes/" + runner[2] + ">" + runner[1] + " " + runner[0] + "</a></td>"));
+    	lineItem.append($("<td><a href=http://milesplit.com/teams/" + runner[4] + ">" + runner[3] + "</a></td>"));
+    	lineItem.append($("<td>" + runner[5] + "</td>"));
 
 		// add the click listener
         lineItem.find("a").click(link);

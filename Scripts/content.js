@@ -45,10 +45,23 @@ function getID(){
 
 // follow the athlete
 function followAthlete(){
-	// get first and last name
-	var info = $("meta[name=keywords]").attr("content").split(",");
+	// get some info from the page
+	var nameInfo = $("meta[name=keywords]").attr("content").split(",");
+	var team = $("span.current-school a").text();
+	var tid = $("span.current-school a").attr("href").split("/");
+	var loc = $("span.city-state").text();
+
+	//create the object
 	var runner = {};
-	runner[id] = {"first_name":info[0], "last_name": info[1], "new_results": {}, "last_seen_result": ""};
+	runner[id] = {
+					"first_name":nameInfo[0], 
+					"last_name": nameInfo[1], 
+					"new_results": {}, 
+					"last_seen_result": "",
+					"team": team,
+					"teamID": tid[tid.length-1],
+					"location": loc
+				};
 	chrome.storage.sync.set(runner);
 	setButtonFunction(false);	
 
