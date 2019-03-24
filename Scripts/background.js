@@ -1,5 +1,9 @@
+checkAllResults();
+updateBadgeText();
 // check for new results every minute
 setInterval(checkAllResults, 60000);
+// update the badge text every second
+setInterval(updateBadgeText, 1000);
 
 // check for new results for all followed runners
 function checkAllResults(){
@@ -10,8 +14,19 @@ function checkAllResults(){
 	});
 }
 
+// checks how many notifications there are and updates the badge
+function updateBadgeText(){
+	chrome.storage.sync.get(null, (runners) => {
+		numNotifications = 0;
+		for(id in runners)
+			numNotifications += Object.keys(runners[id]["new_results"]).length;
+		chrome.browserAction.setBadgeText({"text": numNotifications+""});	
+	});
+}
+
 // check for new results for a specific runner
 // update the runner in storage
+// if we aren't logged in, update the badge color
 function checkResults(id, runner){
 	// if we don't have a recent return then ignore
 	if(runner["last_seen_result"] == "") return;
@@ -23,9 +38,12 @@ function checkResults(id, runner){
 
 			// check if we got the goods or we were blocked
 			if(page.find("#proCallToAction").length > 0){
-				console.log("Could not check results: not logged in");
+				// set the badge to red
+				chrome.browserAction.setBadgeBackgroundColor({"color": "#FF0000"});
 				return;
 			}
+			// set badge to green as we are loggen in
+			chrome.browserAction.setBadgeBackgroundColor({"color": "#00FF00"});
 
 			//loop through each result
 			page.find("div.record").each(function(){
