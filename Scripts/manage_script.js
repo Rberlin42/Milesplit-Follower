@@ -79,4 +79,8 @@ function displayRunners(data){
 	});
 }
 
-
+// redirect to the runner associated with the list item
+function link(e){
+	var newURL = e.target.href;
+	chrome.tabs.update({url:newURL});
+}

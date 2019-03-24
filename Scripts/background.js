@@ -1,74 +1,64 @@
-/*function prRequest(id, runner){
-	var doc = document.createElement("html");
-	var request = new XMLHttpRequest();
-    request.open("GET", "https://www.milesplit.com/athletes/"+id);
-	request.onreadystatechange = function() {
-        if (this.readyState == this.DONE && this.status == 200) {
-            if (this.responseText) {
-				var url = this.responseText.substring(37,this.responseText.length-7);
-                doc.innerHTML = url;
-				generateNotifications(doc, id, runner);
-            }
-            else { console.log("Error"); }
-        }
-    };
-	request.send();
-}
+// check for new results every minute
+setInterval(checkAllResults, 60000);
 
-function isEqual(a, b) {
-	var akeys = Object.keys(a);
-	var bkeys = Object.keys(b);
-
-	if(akeys.length != bkeys.length)
-		return false;
-
-	//check times
-	for(var i = 0; i < akeys.length; i++){
-		var key = akeys[i];
-		if(bkeys.indexOf(key) < 0 || a[key] != b[key]){
-			return false;
+// check for new results for all followed runners
+function checkAllResults(){
+	chrome.storage.sync.get(null, (runners) => {
+		for(id in runners){
+			checkResults(id, runners[id]);
 		}
-	}
-	return true;
+	});
 }
 
-function generateNotifications(doc, id, runner){
-	if(runner["pr?"])
-		return;
+// check for new results for a specific runner
+// update the runner in storage
+function checkResults(id, runner){
+	// if we don't have a recent return then ignore
+	if(runner["last_seen_result"] == "") return;
 
-	var newrunner = getRunnerData(doc, id)[id];
-	var oldrunner = runner;
-	if(!isEqual(oldrunner, newrunner)){
-		newrunner["pr?"] = true
-		var notification = {};
-		notification[id] = newrunner;
-		chrome.storage.local.set(notification);
-	}
+	// request the page
+	$.get("https://www.milesplit.com/athletes/"+id, {"sort":"byDate"}, (data, status, xhr) => {
+		if(status == "success"){
+			var page = $("<html></html>").append(data.substring(data.indexOf("<!doctype html>")+16, data.indexOf("</html>")-1));
+
+			// check if we got the goods or we were blocked
+			if(page.find("#proCallToAction").length > 0){
+				console.log("Could not check results: not logged in");
+				return;
+			}
+
+			//loop through each result
+			page.find("div.record").each(function(){
+				// if we hit the last seen then there are no new results
+				var resultID = $(this).attr("data-performance-id");
+				if(resultID == runner["last_seen_result"])
+					return false;
+
+				// add new result data
+				runner["new_results"][resultID] = getResultInfo($(this));
+			});
+
+			// set new last seen
+			runner["last_seen_result"] = page.find("div.record:first").attr("data-performance-id");
+
+			// store the runner
+			var updated = {};
+			updated[id] = runner;
+			chrome.storage.sync.set(updated);
+
+		}
+		else{
+			console.log("Could not check results: Request error");
+			return;
+		}
+	});
 }
 
-
-function getName(doc, id){
-	var title = doc.getElementsByTagName("title")[0];
-	var name = title.innerHTML.substring(0, title.innerHTML.indexOf("-")-1);
-	return name;
+// takes a result and returns a JSON object with the
+// event, mark, and whether it is a pr
+function getResultInfo(result){
+	var event = result.find(".eventName").text();
+	var mark = result.find("span:first").text();
+	var pr = result.find("span:first").hasClass("personal-record");
+	return {"event": event, "mark": mark, "pr": pr};
 }
-
-//return a runner
-function getRunnerData(doc, id){
-	var runner = {};
-	var prs = {};
-	var prElements = doc.getElementsByClassName("personal-record");
-	for(var i = 0; i < prElements.length; i++){
-		var time = prElements[i].innerHTML.trim();
-		var eventElement = prElements[i].parentElement.parentElement.parentElement.parentElement;
-		var event = eventElement.getElementsByClassName("event-heading")[0].innerHTML.trim();
-		var seasonElement = eventElement.parentElement;
-		event = event + " (" + seasonElement.getAttribute("data-season").trim() + ")";
-		prs[event] = time;
-	}
-	prs["name"] = getName(doc, id);
-	prs["pr?"] = false;
-	runner[id] = prs;
-	return runner;
-}
-*/

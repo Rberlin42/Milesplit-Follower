@@ -15,15 +15,18 @@ function clear(){
 
         // if its checked, remove it and update the storage
         if($(this).find("input").prop("checked")){
-            var ids = $(this).attr("value").split(".");
+            var id = $(this).attr("value");
             
-            // find the runner in storage and remove the result
-            chrome.storage.sync.get(ids[0], (runner) => {
-                delete runner[ids[0]]["new_results"][ids[1]];
+            // find the runner in storage and remove the results
+            chrome.storage.sync.get(id, (runner) => {
+                runner[id]["new_results"] = {};
                 chrome.storage.sync.set(runner);
             });
 
             // remove it from the list
+            for(var i = 1; i < parseInt($(this).find("td:first").attr("rowspan")); i++){
+                $(this).next().remove();
+            }
             $(this).remove();
         }
     });
@@ -49,15 +52,22 @@ function displayRunners(runners){
     for(id in runners){
         var runner = runners[id];
         var results = runner["new_results"];
+        var rowspan = Object.keys(results).length;
+        var first = true;
 
         // loop through each new result for this runner
         for(resultID in results){
             result = results[resultID];
-
             // create the row item
-            var lineItem = $("<tr class='lineItem' value=" + id + "." + resultID + "></tr>");
-            lineItem.append($("<td><input type=\'checkbox\'></td>"));
-            lineItem.append($("<td><a href=http://milesplit.com/athletes/" + id + "> " + runner["first_name"] + " " + runner["last_name"] + "</a></td>"));
+            var lineItem = $("<tr class='lineItem' value=" + id + "></tr>");
+
+            // create these only once for each runner
+            if(first){
+                lineItem.append($("<td rowspan=" + rowspan + "><input type=\'checkbox\'></td>"));
+                lineItem.append($("<td rowspan=" + rowspan + "><a href=http://milesplit.com/athletes/" + id + "> " + runner["first_name"] + " " + runner["last_name"] + "</a></td>"));
+            }
+
+            // add the result info
             lineItem.append($("<td>" + result["event"] + "</td>"));
             lineItem.append($("<td>" + result["mark"] + "</td>"));
             if(result["pr"])
@@ -69,50 +79,15 @@ function displayRunners(runners){
             lineItem.find("a").click(link);
             // append to the list
             $("#results").append(lineItem);
+
+            // no longer the first result
+            first = false;
         }
     }
 }
 
-
-//Tests
-var me = 
-{
-    "first_name": "Ryan",
-    "last_name": "Berlin",
-    "new_results": {
-        12345: {
-            "event": "5k",
-            "mark": "15:26",
-            "pr": true
-        },
-        12332: {
-            "event": "8k (xc)",
-            "mark": "27:04",
-            "pr": false
-        }
-    },
-    "last_seen_result": 12345
+// redirect to the runner associated with the list item
+function link(e){
+    var newURL = e.target.href;
+    chrome.tabs.update({url:newURL});
 }
-var a = 
-{
-    "first_name": "hello",
-    "last_name": "there",
-    "new_results": {
-        1111: {
-            "event": "shot put",
-            "mark": "25m",
-            "pr": false
-        },
-    },
-    "last_seen_result": 12345
-}
-var b = 
-{
-    "first_name": "Big",
-    "last_name": "Chungus",
-    "new_results": {},
-    "last_seen_result": 0
-}
-//chrome.storage.sync.clear();
-//chrome.storage.sync.set({1:me, 2:a, 3:b});
-printStorageData();

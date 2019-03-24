@@ -45,11 +45,29 @@ function getID(){
 
 // follow the athlete
 function followAthlete(){
+	// get first and last name
 	var info = $("meta[name=keywords]").attr("content").split(",");
 	var runner = {};
-	runner[id] = {"first_name":info[0], "last_name": info[1], "new_results": {}};
+	runner[id] = {"first_name":info[0], "last_name": info[1], "new_results": {}, "last_seen_result": ""};
 	chrome.storage.sync.set(runner);
-	setButtonFunction(false);
+	setButtonFunction(false);	
+
+	// get most recent result
+	$.get("https://www.milesplit.com/athletes/"+id, {"sort":"byDate"}, (data, status, xhr) => {
+		if(status == "success"){
+			var page = $("<html></html>").append(data.substring(data.indexOf("<!doctype html>")+16, data.indexOf("</html>")-1));
+
+			runner[id]["last_seen_result"] = page.find("div.record:first").attr("data-performance-id");
+
+			//store the new runner and update the button
+			chrome.storage.sync.set(runner);
+		}
+		else{
+			alert("error occurred");
+			chrome.storage.sync.remove(id);
+			setButtonFunction(true);
+		}
+	});
 }
 
 // unfollow the athlete

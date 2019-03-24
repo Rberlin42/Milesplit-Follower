@@ -5,7 +5,8 @@
 	"description": "Follow athletes on Milesplit",
 
 	"background":{
-		"scripts": ["Scripts/background.js"]
+		"scripts": ["Scripts/jquery-3.1.1.min.js", "Scripts/background.js"],
+		"persistent": true
 	},
 
 	"browser_action":{
@@ -20,7 +21,7 @@
 		"matches": ["*://*.milesplit.com/athletes/*"],
 
 		"exclude_matches": ["*://*.milesplit.com/athletes", "*://*.milesplit.com/athletes/"],
-		"js": ["Scripts/jquery-3.1.1.min.js", "Scripts/util.js", "Scripts/content.js"],
+		"js": ["Scripts/jquery-3.1.1.min.js", "Scripts/content.js"],
 		"css": ["Styles/content_style.css"]
 	}
 	]
