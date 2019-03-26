@@ -9,27 +9,27 @@ $(document).ready(function(){
 
 // clear all notifications that are checked
 function clear(){
+    chrome.storage.sync.get(null, (runners) =>{
+        // loop through each line
+        $(".lineItem").each(function(){
 
-    // loop through each line
-    $(".lineItem").each(function(){
-
-        // if its checked, remove it and update the storage
-        if($(this).find("input").prop("checked")){
-            var id = $(this).attr("value");
-            
-            // find the runner in storage and remove the results
-            chrome.storage.sync.get(id, (runner) => {
-                runner[id]["new_results"] = {};
-                chrome.storage.sync.set(runner);
-            });
-
-            // remove it from the list
-            for(var i = 1; i < parseInt($(this).find("td:first").attr("rowspan")); i++){
-                $(this).next().remove();
+            // if its checked, clear the notifications for that runner
+            if($(this).find("input").prop("checked")){
+                var id = $(this).attr("value");
+                
+                // remove the results
+                runners[id]["new_results"] = {};
+                    
+                // remove it from the list
+                for(var i = 1; i < parseInt($(this).find("td:first").attr("rowspan")); i++){
+                    $(this).next().remove();
+                }
+                $(this).remove();
             }
-            $(this).remove();
-        }
-    });
+        });
+        // update the storage
+        chrome.storage.sync.set(runners);
+    });   
 }
 
 // check all boxes

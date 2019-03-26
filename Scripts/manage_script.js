@@ -14,21 +14,24 @@ function unfollow(){
 	if(!confirm("Are you sure you want to unfollow all selected runners?"))
 		return;
 
+	// create an array of keys
+	keys = [];
 	//loop through each line
 	$(".lineItem").each(function(){
 
 		// if it is checked, remove it from the list and the storage
 		if($(this).find("input").prop("checked")){
 			var id = $(this).attr("value");
-			chrome.storage.sync.remove(id);
 			$(this).remove();
-
+			keys.push(id);
 			//update the count
 			followCount--;
 		}
 	});
 
-	//update the count on the page
+	//remove from storage
+	chrome.storage.sync.remove(keys);
+	//update the page
 	$("#follow-count").text(followCount);
 	chrome.tabs.reload();
 }

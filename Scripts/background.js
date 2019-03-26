@@ -1,9 +1,9 @@
 checkAllResults();
-updateBadgeText();
-// check for new results every minute
-setInterval(checkAllResults, 60000);
-// update the badge text every second
-setInterval(updateBadgeText, 1000);
+updateBadge();
+// check for new results every 15 minutes
+setInterval(checkAllResults, 900000);
+// check our connection every 5 seconds
+setInterval(updateBadge, 5000);
 
 // check for new results for all followed runners
 function checkAllResults(){
@@ -14,13 +14,34 @@ function checkAllResults(){
 	});
 }
 
-// checks how many notifications there are and updates the badge
-function updateBadgeText(){
+// updates the badge color and text
+function updateBadge(){
+	// count the amount of notifications
 	chrome.storage.sync.get(null, (runners) => {
 		numNotifications = 0;
 		for(id in runners)
 			numNotifications += Object.keys(runners[id]["new_results"]).length;
 		chrome.browserAction.setBadgeText({"text": numNotifications+""});	
+	});
+
+	// check our connectivity
+	$.get("https://www.milesplit.com/athletes/1", {"sort":"byDate"}, (data, status, xhr) => {
+		if(status == "success"){
+			var page = $("<html></html>").append(data.substring(data.indexOf("<!doctype html>")+16, data.indexOf("</html>")-1));
+
+			// check if we got the goods or we were blocked
+			if(page.find("#proCallToAction").length > 0){
+				// set the badge to red
+				chrome.browserAction.setBadgeBackgroundColor({"color": "#FF0000"});
+				return;
+			}
+			// set badge to green as we are loggen in
+			chrome.browserAction.setBadgeBackgroundColor({"color": "#00AA00"});
+		}
+		else{
+			console.log("Could not check connectivity");
+			return;
+		}
 	});
 }
 
@@ -37,15 +58,10 @@ function checkResults(id, runner){
 			var page = $("<html></html>").append(data.substring(data.indexOf("<!doctype html>")+16, data.indexOf("</html>")-1));
 
 			// check if we got the goods or we were blocked
-			if(page.find("#proCallToAction").length > 0){
-				// set the badge to red
-				chrome.browserAction.setBadgeBackgroundColor({"color": "#FF0000"});
-				return;
-			}
-			// set badge to green as we are loggen in
-			chrome.browserAction.setBadgeBackgroundColor({"color": "#00FF00"});
+			if(page.find("#proCallToAction").length > 0) return;
 
 			//loop through each result
+			var num_results = 0;
 			page.find("div.record").each(function(){
 				// if we hit the last seen then there are no new results
 				var resultID = $(this).attr("data-performance-id");
@@ -54,7 +70,11 @@ function checkResults(id, runner){
 
 				// add new result data
 				runner["new_results"][resultID] = getResultInfo($(this));
+				num_results++;
 			});
+
+			// if there are no new results, return without updating the storage
+			if(num_results == 0) return;
 
 			// set new last seen
 			runner["last_seen_result"] = page.find("div.record:first").attr("data-performance-id");
@@ -62,7 +82,11 @@ function checkResults(id, runner){
 			// store the runner
 			var updated = {};
 			updated[id] = runner;
-			chrome.storage.sync.set(updated);
+			chrome.storage.sync.set(updated, function(){
+				if(chrome.runtime.lastError){
+					console.log(chrome.runtime.lastError.message);
+				}
+			});
 
 		}
 		else{

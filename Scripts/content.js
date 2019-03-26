@@ -62,7 +62,7 @@ function followAthlete(){
 					"teamID": tid[tid.length-1],
 					"location": loc
 				};
-	chrome.storage.sync.set(runner);
+	chrome.storage.sync.set(runner, errorHandle);
 	setButtonFunction(false);	
 
 	// get most recent result
@@ -73,7 +73,7 @@ function followAthlete(){
 			runner[id]["last_seen_result"] = page.find("div.record:first").attr("data-performance-id");
 
 			//store the new runner and update the button
-			chrome.storage.sync.set(runner);
+			chrome.storage.sync.set(runner, errorHandle);
 		}
 		else{
 			alert("error occurred");
@@ -87,4 +87,11 @@ function followAthlete(){
 function unfollowAthlete(){
 	chrome.storage.sync.remove(id);
 	setButtonFunction(true);
+}
+
+function errorHandle(){
+	if(chrome.runtime.lastError){
+		console.log(chrome.runtime.lastError.message);
+		alert("Error following athlete: Storage Full");
+	}
 }
