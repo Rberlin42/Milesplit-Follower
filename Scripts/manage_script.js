@@ -36,11 +36,18 @@ function unfollow(){
 	chrome.tabs.reload();
 }
 
-// check all boxes
+// check or uncheck all boxes
 function selectAll(){
     $("input").each(function(){
         $(this).prop("checked", true);
     });
+    $("#select-all").off("click").text("Uncheck all").click(uncheckAll);
+}
+function uncheckAll(){
+    $("input").each(function(){
+        $(this).prop("checked", false);
+    });
+    $("#select-all").off("click").text("Select all").click(selectAll);
 }
 
 // Take in the runner objects and display them in the list
