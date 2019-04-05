@@ -12,7 +12,7 @@
 	"browser_action":{
 		"default_title": "Milesplit Follower",
 		"default_popup": "Pages/popup.html",
-		"default_icon": "icon.png"
+		"default_icon": "Images/icon.png"
 	},
 	
 	"permissions": ["tabs", "https://www.milesplit.com/", "activeTab", "storage"],
@@ -24,6 +24,7 @@
 		"js": ["Scripts/jquery-3.1.1.min.js", "Scripts/content.js"],
 		"css": ["Styles/content_style.css"]
 	}
-	]
+	],
+	"web_accessible_resources": ["Images/pr.png"]
 }
 

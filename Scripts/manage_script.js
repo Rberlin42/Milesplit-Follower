@@ -93,10 +93,10 @@ function displayRunners(data){
 	runners.forEach((runner) => { 
 		// create the row item
     	var lineItem = $("<tr class='lineItem' value=" + runner[2] + "></tr>");
-    	lineItem.append($("<td><input type=\'checkbox\'></td>"));
-    	lineItem.append($("<td><a href=http://milesplit.com/athletes/" + runner[2] + ">" + runner[1] + " " + runner[0] + "</a></td>"));
-    	lineItem.append($("<td><a href=http://milesplit.com/teams/" + runner[4] + ">" + runner[3] + "</a></td>"));
-    	lineItem.append($("<td>" + runner[5] + "</td>"));
+    	lineItem.append($("<td class='check'><input type=\'checkbox\'></td>"));
+    	lineItem.append($("<td class='name'><a href=http://milesplit.com/athletes/" + runner[2] + ">" + runner[1] + " " + runner[0] + "</a></td>"));
+    	lineItem.append($("<td class='team'><a href=http://milesplit.com/teams/" + runner[4] + ">" + runner[3] + "</a></td>"));
+    	lineItem.append($("<td class='location'>" + runner[5] + "</td>"));
 
 		// add the click listener
         lineItem.find("a").click(link);

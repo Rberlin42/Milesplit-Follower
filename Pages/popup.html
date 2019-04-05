@@ -4,22 +4,26 @@
     <link rel="stylesheet" href="../Styles/popup_style.css">
 </head>
 <body>
-
     <h1>New Results</h1>
-    <div id="results-container">
+    <div id="button-container">
+        <button class="list-operator" id="select-all">Select All</button>
+        <button class="list-operator" id="clear">Clear</button>
+        <a href="manage_recruits.html"><button id="nav">Manage Athletes</button></a>
+    </div>
+    <div id="list-container">
     	<table id="results">
-    		<tr>
-    			<th></th>
-    			<th>Name</th>
-    			<th>Event</th>
-    			<th>Time/Mark</th>
-    			<th></th>
-    		</tr>
+            <thead>
+        		<tr>
+        			<th class="check"></th>
+        			<th class="name">Name</th>
+        			<th class="event">Event</th>
+        			<th class="mark">Time/Mark</th>
+        			<th class="pr"></th>
+        		</tr>
+            </thead>
+            <tbody></tbody>
     	</table>
     </div>
-    <button id="select-all">Select All</button>
-	<button id="clear">Clear</button>
-    <a href="manage_recruits.html"><button>Manage Recruits</button></a>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="../Scripts/popup_script.js"></script>
 </body>

@@ -5,19 +5,24 @@
 </head>
 <body>
     <h1>Following (<span id="follow-count"></span>)</h1>
-    <div id="runnerList-container">
+    <div id="button-container">
+        <button class="list-operator" id="select-all">Select All</button>
+        <button class="list-operator" id="unfollow">Unfollow</button>
+        <a href="popup.html"><button id="nav">Back to Notifications</button></a>
+    </div>
+    <div id="list-container">
     	<table id="runnersList">
-    		<tr>
-    			<th></th>
-    			<th>Name</th>
-                <th>Team</th>
-                <th>Location</th>
-    		</tr>
+            <thead>
+        		<tr>
+        			<th class="check"></th>
+        			<th class="name">Name</th>
+                    <th class="team">Team</th>
+                    <th class="location">Location</th>
+        		</tr>
+            </thead>
+            <tbody></tbody>
     	</table>
     </div>
-    <button id="select-all">Select All</button>
-    <button id="unfollow">Unfollow</button>
-    <a href="popup.html"><button>Back to Notifications</button></a>
     <script src="../Scripts/jquery-3.1.1.min.js"></script>
     <script src="../Scripts/manage_script.js"></script>
 </body>

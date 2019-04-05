@@ -5,6 +5,30 @@ chrome.storage.sync.get(null, displayRunners);
 $(document).ready(function(){
     $("#clear").click(clear);
     $("#select-all").click(selectAll);
+
+    // highlight rows on hover
+    $("tbody tr").hover(function(){
+        var row = $(this);
+        while(row.find("td").first().attr("rowspan") === undefined){
+            row = row.prev();
+        }
+        var len = parseInt(row.find("td").first().attr("rowspan"));
+        for(var i = 0; i < len; i++){
+            row.css("background-color", "#f4f4f4");
+            row = row.next();
+        }
+    },
+    function(){
+        var row = $(this);
+        while(row.find("td").first().attr("rowspan") === undefined){
+            row = row.prev();
+        }
+        var len = parseInt(row.find("td").first().attr("rowspan"));
+        for(var i = 0; i < len; i++){
+            row.css("background-color", "white");
+            row = row.next();
+        }
+    });
 });
 
 // clear all notifications that are checked
@@ -70,17 +94,21 @@ function displayRunners(runners){
 
             // create these only once for each runner
             if(first){
-                lineItem.append($("<td rowspan=" + rowspan + "><input type=\'checkbox\'></td>"));
-                lineItem.append($("<td rowspan=" + rowspan + "><a href=http://milesplit.com/athletes/" + id + ">" + runner["first_name"] + " " + runner["last_name"] + "</a></td>"));
+                lineItem.append($("<td rowspan=" + rowspan + " class='check'><input type=\'checkbox\'></td>"));
+                lineItem.append($("<td rowspan=" + rowspan + " class='name'><a href=http://milesplit.com/athletes/" + id + ">" + runner["first_name"] + " " + runner["last_name"] + "</a></td>"));
             }
 
             // add the result info
-            lineItem.append($("<td>" + result["event"] + "</td>"));
-            lineItem.append($("<td>" + result["mark"] + "</td>"));
-            if(result["pr"])
-                lineItem.append($("<td>PR!</td>"));
+            lineItem.append($("<td class='event'>" + result["event"] + "</td>"));
+            lineItem.append($("<td class='mark'>" + result["mark"] + "</td>"));
+            if(result["pr"]){
+                var img = $("<img/>");
+                img.attr("src", chrome.runtime.getURL("Images/pr.png"));
+                var td = $("<td class='pr'></td>").append(img);
+                lineItem.append(td);
+            }
             else
-                lineItem.append($("<td></td>"));
+                lineItem.append($("<td class='pr'></td>"));
 
             // add the click listener
             lineItem.find("a").click(link);
