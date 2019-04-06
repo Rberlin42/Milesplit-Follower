@@ -25,6 +25,6 @@
 		"css": ["Styles/content_style.css"]
 	}
 	],
-	"web_accessible_resources": ["Images/pr.png"]
+	"web_accessible_resources": ["Images/*"]
 }
 

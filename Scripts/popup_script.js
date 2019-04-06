@@ -1,10 +1,17 @@
 // load all runners from storage when the popup is opened
 chrome.storage.sync.get(null, displayRunners);
 
-// add event handlers for the buttons
 $(document).ready(function(){
+    // add event handlers for the buttons
     $("#clear").click(clear);
     $("#select-all").click(selectAll);
+
+    // milesplit link stuff
+    $("#milesplit-link img").attr("src", chrome.runtime.getURL("Images/logo.jpg"));
+    $("#milesplit-link").click(function(){
+        var newURL = $(this).attr("href");
+        chrome.tabs.update({url:newURL});
+    });
 
     // highlight rows on hover
     $("tbody tr").hover(function(){
@@ -102,7 +109,7 @@ function displayRunners(runners){
             lineItem.append($("<td class='event'>" + result["event"] + "</td>"));
             lineItem.append($("<td class='mark'>" + result["mark"] + "</td>"));
             if(result["pr"]){
-                var img = $("<img/>");
+                var img = $("<img alt='pr'/>");
                 img.attr("src", chrome.runtime.getURL("Images/pr.png"));
                 var td = $("<td class='pr'></td>").append(img);
                 lineItem.append(td);
@@ -123,6 +130,8 @@ function displayRunners(runners){
 
 // redirect to the runner associated with the list item
 function link(e){
+    console.log(e);
     var newURL = e.target.href;
+    alert(newURL);
     chrome.tabs.update({url:newURL});
 }

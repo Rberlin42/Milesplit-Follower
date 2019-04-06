@@ -7,11 +7,18 @@ var followCount;
 $(document).ready(function(){
     $("#unfollow").click(unfollow);
     $("#select-all").click(selectAll);
+
+    // milesplit link stuff
+    $("#milesplit-link img").attr("src", chrome.runtime.getURL("Images/logo.jpg"));
+    $("#milesplit-link").click(function(){
+        var newURL = $(this).attr("href");
+        chrome.tabs.update({url:newURL});
+    });
 });
 
 // Unfollow all runners that are checked
 function unfollow(){
-	if(!confirm("Are you sure you want to unfollow all selected runners?"))
+	if(!confirm("Are you sure you want to unfollow all selected athletes?"))
 		return;
 
 	// create an array of keys
@@ -32,7 +39,7 @@ function unfollow(){
 	//remove from storage
 	chrome.storage.sync.remove(keys);
 	//update the page
-	$("#follow-count").text(followCount);
+	$("#follow-count").text("("+followCount+")");
 	chrome.tabs.reload();
 }
 
@@ -61,7 +68,7 @@ function displayRunners(data){
     // display the number of athletes followed
 	var ids = Object.keys(data);
 	followCount = ids.length;
-	$("#follow-count").text(followCount);
+	$("#follow-count").text("("+followCount+")");
 
 	// create a list of [last_name, first_name, id, team, teamID, location] lists
 	runners = [];
