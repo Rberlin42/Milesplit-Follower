@@ -25,6 +25,12 @@
 		"css": ["Styles/content_style.css"]
 	}
 	],
-	"web_accessible_resources": ["Images/*"]
+
+	"web_accessible_resources": ["Images/*"],
+
+	"icons": {
+		"128": "Images/icon128.png",
+		"16": "Images/icon.png"
+	}
 }
 
