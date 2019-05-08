@@ -130,8 +130,6 @@ function displayRunners(runners){
 
 // redirect to the runner associated with the list item
 function link(e){
-    console.log(e);
     var newURL = e.target.href;
-    alert(newURL);
     chrome.tabs.update({url:newURL});
 }
