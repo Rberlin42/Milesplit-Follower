@@ -4,10 +4,12 @@ var id;
 $(document).ready(function(){
 	id = getID();
 
-	// insert button
-	var button = $("#claimAthlete").clone().attr("id", "follow").text("");
-	$("#claimAthlete").after(button);
-	setButtonFunction();
+	// insert button if we're logged in
+	if($(".sign-up-box").length == 0){
+		var button = $("h2.mt-2 a.btn").clone().attr({"id":"follow"}).removeAttr("href").text("");
+		$("h2.mt-2 small.mr-2").after(button);
+		setButtonFunction();
+	}
 });
 
 // set the text and function of the follow button
@@ -46,10 +48,10 @@ function getID(){
 // follow the athlete
 function followAthlete(){
 	// get some info from the page
-	var nameInfo = $("#athleteName").text().split(" ");
-	var team = $("span.current-school a").text();
-	var tid = $("span.current-school a").attr("href").split("/");
-	var loc = $("span.city-state").text();
+	var nameInfo = $("meta[property='og:title']").attr("content").split(" ");
+	var team = $("h1.mb-0.mr-2 a.text-sport").text();
+	var tid = $("h1.mb-0.mr-2 a.text-sport").attr("href").split("=");
+	var loc = $("span[ng-if='::vm.team.City']").parent().text().split("-");
 
 	//create the object
 	var runner = {};
@@ -60,20 +62,41 @@ function followAthlete(){
 					"last_seen_result": "",
 					"team": team,
 					"teamID": tid[tid.length-1],
-					"location": loc
+					"location": loc[loc.length-1]
 				};
 	chrome.storage.sync.set(runner, errorHandle);
 	setButtonFunction(false);	
 
 	// get most recent result
-	$.get("https://www.milesplit.com/athletes/"+id, {"sort":"byDate"}, (data, status, xhr) => {
+	$.get("https://www.athletic.net/TrackAndField/Athlete.aspx", {"AID":id}, (data, status, xhr) => {
 		if(status == "success"){
-			var page = $("<html></html>").append(data.substring(data.indexOf("<!doctype html>")+16, data.indexOf("</html>")-1));
+			tfPage = $("<html></html>").append(data.substring(data.indexOf("<head"), data.indexOf("</html>")));
 
-			runner[id]["last_seen_result"] = page.find("div.record:first").attr("data-performance-id");
+			$.get("https://www.athletic.net/CrossCountry/Athlete.aspx", {"AID":id}, (data, status, xhr) => {
+				if(status == "success"){
+					var xcPage = $("<html></html>").append(data.substring(data.indexOf("<head"), data.indexOf("</html>")));
 
-			//store the new runner and update the button
-			chrome.storage.sync.set(runner, errorHandle);
+					var ids = [];
+					tfPage.find("tr[id^=rID_]").each(function(){
+						ids.push($(this).attr("id").substring(4));
+					});
+					runner[id]["last_seen_TFresult"] = ids.reduce((last_seen, id) => { return Math.max(last_seen, id);});
+					ids = [];
+					xcPage.find("tr[id^=rID_]").each(function(){
+						ids.push($(this).attr("id").substring(4));
+					});
+					runner[id]["last_seen_XCresult"] = ids.reduce((last_seen, id) => { return Math.max(last_seen, id);});
+
+					//store the new runner and update the button
+					chrome.storage.sync.set(runner, errorHandle);
+				}
+				else{
+					alert("error occurred");
+					chrome.storage.sync.remove(id);
+					setButtonFunction(true);
+				}
+				
+			});
 		}
 		else{
 			alert("error occurred");
