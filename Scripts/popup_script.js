@@ -79,7 +79,6 @@ function uncheckAll(){
 
 // take in the runner objects and display them appropriately
 function displayRunners(runners){
-
     // if the storage request returns an error, then display it
     if(chrome.runtime.lastError){
         $("body").html(chrome.runtime.lastError);

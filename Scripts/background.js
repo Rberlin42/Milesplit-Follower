@@ -25,12 +25,12 @@ function updateBadge(){
 	});
 
 	// check our connectivity
-	$.get("https://www.milesplit.com/athletes/1", {"sort":"byDate"}, (data, status, xhr) => {
+	$.get("https://www.athletic.net/TrackAndField/Athlete.aspx", {"AID":"1"}, (data, status, xhr) => {
 		if(status == "success"){
-			var page = $("<html></html>").append(data.substring(data.indexOf("<!doctype html>")+16, data.indexOf("</html>")-1));
+			var page = $("<html></html>").append(data.substring(data.indexOf("<head"), data.indexOf("</html>")));
 
 			// check if we got the goods or we were blocked
-			if(page.find("#proCallToAction").length > 0){
+			if(page.find(".sign-up-box").length > 0){
 				// set the badge to red
 				chrome.browserAction.setBadgeBackgroundColor({"color": "#FF0000"});
 				return;
@@ -53,38 +53,65 @@ function checkResults(id, runner){
 	if(runner["last_seen_result"] == "") return;
 
 	// request the page
-	$.get("https://www.milesplit.com/athletes/"+id, {"sort":"byDate"}, (data, status, xhr) => {
+	$.get("https://www.athletic.net/TrackAndField/Athlete.aspx", {"AID":id}, (data, status, xhr) => {
 		if(status == "success"){
-			var page = $("<html></html>").append(data.substring(data.indexOf("<!doctype html>")+16, data.indexOf("</html>")-1));
-
+			var tfPage = $("<html></html>").append(data.substring(data.indexOf("<head"), data.indexOf("</html>")));
 			// check if we got the goods or we were blocked
-			if(page.find("#proCallToAction").length > 0) return;
+			if(tfPage.find(".sign-up-box").length > 0) return;
 
-			//loop through each result
-			var num_results = 0;
-			page.find("div.record").each(function(){
-				// if we hit the last seen then there are no new results
-				var resultID = $(this).attr("data-performance-id");
-				if(resultID == runner["last_seen_result"])
-					return false;
+			$.get("https://www.athletic.net/CrossCountry/Athlete.aspx", {"AID":id}, (data, status, xhr) => {
+				if(status == "success"){
+					var xcPage = $("<html></html>").append(data.substring(data.indexOf("<head"), data.indexOf("</html>")));
+					// check if we got the goods or we were blocked
+					if(xcPage.find(".sign-up-box").length > 0) return;
 
-				// add new result data
-				runner["new_results"][resultID] = getResultInfo($(this));
-				num_results++;
-			});
+					var num_results = 0;
+					var lastSeenTF = runner["last_seen_TFresult"];
+					var lastSeenXC = runner["last_seen_XCresult"];
 
-			// if there are no new results, return without updating the storage
-			if(num_results == 0) return;
+					//loop through each result
+					tfPage.find("tr[id^=rID_]").each(function(){
+						// if were less than the last seen, then its not new
+						var resultID = $(this).attr("id").substring(4);
+						if(parseInt(resultID) <= parseInt(runner["last_seen_TFresult"]))
+							return true;
 
-			// set new last seen
-			runner["last_seen_result"] = page.find("div.record:first").attr("data-performance-id");
+						// add new result data
+						runner["new_results"][resultID] = getResultInfo($(this));
+						lastSeenTF = Math.max(parseInt(lastSeenTF), parseInt(resultID));
+						num_results++;
+					});
+					xcPage.find("tr[id^=rID_]").each(function(){
+						// if were less than the last seen, then its not new
+						var resultID = $(this).attr("id").substring(4);
+						if(parseInt(resultID) <= parseInt(runner["last_seen_XCresult"]))
+							return true;
 
-			// store the runner
-			var updated = {};
-			updated[id] = runner;
-			chrome.storage.sync.set(updated, function(){
-				if(chrome.runtime.lastError){
-					console.log(chrome.runtime.lastError.message);
+						// add new result data
+						runner["new_results"][resultID] = getResultInfo($(this));
+						lastSeenXC = Math.max(parseInt(lastSeenXC), parseInt(resultID));
+						num_results++;
+					});
+
+					// if there are no new results, return without updating the storage
+					if(num_results == 0) return;
+
+					// set new last seen
+					runner["last_seen_TFresult"] = lastSeenTF;
+					runner["last_seen_XCresult"] = lastSeenXC;
+
+					// store the runner
+					var updated = {};
+					updated[id] = runner;
+					chrome.storage.sync.set(updated, function(){
+						if(chrome.runtime.lastError){
+							console.log(chrome.runtime.lastError.message);
+						}
+					});
+				}
+				else{
+					console.log("Could not check results: Request error");
+					return;
 				}
 			});
 
@@ -99,8 +126,8 @@ function checkResults(id, runner){
 // takes a result and returns a JSON object with the
 // event, mark, and whether it is a pr
 function getResultInfo(result){
-	var event = result.find(".eventName").text();
-	var mark = result.find("span:first").text();
-	var pr = result.find("span:first").hasClass("personal-record");
+	var event = result.closest("table").prev().text();
+	var mark = result.find("td:eq(1) a").html().split("<")[0];
+	var pr = result.find("td:eq(1)").text().includes("PR");
 	return {"event": event, "mark": mark, "pr": pr};
 }

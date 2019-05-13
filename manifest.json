@@ -1,8 +1,8 @@
 {
 	"manifest_version": 2,
-	"name": "Milesplit Follower",
-	"version": "2.01",
-	"description": "Follow athletes on Milesplit",
+	"name": "Athletic.net Follower",
+	"version": "1.0",
+	"description": "Follow athletes on Athletic.net",
 
 	"background":{
 		"scripts": ["Scripts/jquery-3.1.1.min.js", "Scripts/background.js"],
@@ -10,17 +10,15 @@
 	},
 
 	"browser_action":{
-		"default_title": "Milesplit Follower",
+		"default_title": "Athletic.net Follower",
 		"default_popup": "Pages/popup.html",
 		"default_icon": "Images/icon.png"
 	},
 	
-	"permissions": ["tabs", "https://www.milesplit.com/", "activeTab", "storage"],
+	"permissions": ["tabs", "https://www.athletic.net/", "activeTab", "storage"],
 	"content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'",
 	"content_scripts": [{
-		"matches": ["*://*.milesplit.com/athletes/*"],
-
-		"exclude_matches": ["*://*.milesplit.com/athletes", "*://*.milesplit.com/athletes/"],
+		"matches": ["*://*.athletic.net/TrackAndField/Athlete.aspx?AID=*", "*://*.athletic.net/CrossCountry/Athlete.aspx?AID=*"],
 		"js": ["Scripts/jquery-3.1.1.min.js", "Scripts/content.js"],
 		"css": ["Styles/content_style.css"]
 	}
