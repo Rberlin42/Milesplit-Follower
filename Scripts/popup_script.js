@@ -101,7 +101,7 @@ function displayRunners(runners){
             // create these only once for each runner
             if(first){
                 lineItem.append($("<td rowspan=" + rowspan + " class='check'><input type=\'checkbox\'></td>"));
-                lineItem.append($("<td rowspan=" + rowspan + " class='name'><a href=http://milesplit.com/athletes/" + id + ">" + runner["first_name"] + " " + runner["last_name"] + "</a></td>"));
+                lineItem.append($("<td rowspan=" + rowspan + " class='name'><a href=https://www.athletic.net/TrackAndField/Athlete.aspx?AID=" + id + ">" + runner["first_name"] + " " + runner["last_name"] + "</a></td>"));
             }
 
             // add the result info

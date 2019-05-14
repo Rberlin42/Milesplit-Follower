@@ -101,8 +101,8 @@ function displayRunners(data){
 		// create the row item
     	var lineItem = $("<tr class='lineItem' value=" + runner[2] + "></tr>");
     	lineItem.append($("<td class='check'><input type=\'checkbox\'></td>"));
-    	lineItem.append($("<td class='name'><a href=http://milesplit.com/athletes/" + runner[2] + ">" + runner[1] + " " + runner[0] + "</a></td>"));
-    	lineItem.append($("<td class='team'><a href=http://milesplit.com/teams/" + runner[4] + ">" + runner[3] + "</a></td>"));
+    	lineItem.append($("<td class='name'><a href=https://www.athletic.net/TrackAndField/Athlete.aspx?AID=" + runner[2] + ">" + runner[1] + " " + runner[0] + "</a></td>"));
+    	lineItem.append($("<td class='team'><a href=https://www.athletic.net/TrackAndField/School.aspx?SchoolID=" + runner[4] + ">" + runner[3] + "</a></td>"));
     	lineItem.append($("<td class='location'>" + runner[5] + "</td>"));
 
 		// add the click listener
